@@ -1,45 +1,80 @@
-import { Tabs } from "expo-router";
-import { Platform } from "react-native";
-
-import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import TabBarBackground from "@/components/ui/TabBarBackground";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { Tabs } from 'expo-router';
+import { Entypo } from '@expo/vector-icons';
+import { Text } from 'react-native';
+import { Colors } from '@/constants/Colors';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function TabLayout() {
-    const colorScheme = useColorScheme();
-
-    return (
-        <Tabs
-            screenOptions={{
-                tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-                headerShown: false,
-                tabBarButton: HapticTab,
-                tabBarBackground: TabBarBackground,
-                tabBarStyle: Platform.select({
-                    ios: { position: "absolute" },
-                    default: {},
-                }),
-            }}
-        >
-            {/* Home Tab */}
-            <Tabs.Screen
-                name="index"
-                options={{
-                    title: "Home",
-                    tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-                }}
+    console.log('TabLayout: Rendering...');
+  const { colorScheme } = useTheme();
+  const defaultScheme = colorScheme ?? 'dark'; // Default to dark if not set
+  console.log('defaultScheme:', defaultScheme);
+  return (
+    <Tabs
+      screenOptions={{
+        // Default dark/gray background until updated
+        tabBarStyle: {
+          backgroundColor: Colors[defaultScheme].background,
+          height: 60,
+          paddingBottom: 5,
+        },
+        // Active/inactive colors
+        tabBarActiveTintColor: Colors[defaultScheme].tint,
+        tabBarInactiveTintColor: 'gray',
+        // Header styling
+        headerStyle: {
+          backgroundColor: Colors[defaultScheme].background,
+        },
+        headerTintColor: Colors[defaultScheme].text,
+        headerShown: false,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          headerTitle: '',
+          title: 'Home',
+          tabBarIcon: ({ color, focused }) => (
+            <Entypo 
+              name="home" 
+              size={24} 
+              color={focused ? Colors[defaultScheme].tint : color}
             />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ 
+              color: focused ? Colors[defaultScheme].tint : 'dark',
+              fontSize: 12 
+            }}>
+              Home
+            </Text>
+          ),
+        }}
+      />
 
-            {/* Explore Tab */}
-            <Tabs.Screen
-                name="explore"
-                options={{
-                    title: "Explore",
-                    tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-                }}
+      {/* ... other existing tabs ... */}
+
+      <Tabs.Screen
+        name="more"
+        options={{
+          title: 'More',
+          tabBarIcon: ({ color, focused }) => (
+            <Entypo 
+              name="dots-three-horizontal" 
+              size={24} 
+              color={focused ? Colors[defaultScheme].tint : color} 
             />
-        </Tabs>
-    );
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ 
+              color: focused ? Colors[defaultScheme].tint : 'dark',
+              fontSize: 12 
+            }}>
+              More
+            </Text>
+          ),
+        }}
+      />
+    </Tabs>
+  );
 }

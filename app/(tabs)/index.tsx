@@ -8,14 +8,22 @@ const NewsScreen: React.FC = () => {
     const [news, setNews] = useState<Article[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        const getNews = async () => {
-            const fetchedNews = await fetchNews();
-            setNews(fetchedNews);
-            setLoading(false);
+    // Get selections from storage or context
+    const loadNews = async () => {
+        setLoading(true);
+        const filters = {
+            categories: [], // Get from storage/context
+            languages: [], // Get from storage/context
+            regions: [], // Get from storage/context
         };
-        getNews();
-    }, []);
+        const articles = await fetchNews(filters);
+        setNews(articles);
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        loadNews();
+    }, [/* dependencies based on where you store selections */]);
 
     if (loading) {
         return (
